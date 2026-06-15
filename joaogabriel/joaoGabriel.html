@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agro Forte | Futuro Sustentável</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
+        
+        body {
+            scroll-behavior: smooth;
+        }
+        
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                              url('https://images.unsplash.com/photo-1625246333197-5c2d3d5a5e5d?ixlib=rb-4.0.3&auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card, .gallery-img, .feature-card, .interactive-btn {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover, .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+        
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .section-title {
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 9999px;
+            background-color: currentColor;
+        }
+
+        .fade-in-view {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-inter { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Roboto Mono', monospace; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body id="app-body" class="font-poppins bg-gray-50 text-gray-800 dark:bg-gray-950 dark:text-gray-200 transition-colors duration-300 text-base">
+    
+    <button onclick="toggleVisualPanel()" class="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform id-theme-btn" title="Configurações Visuais">
+        <i class="fas fa-cog text-2xl animate-spin-slow"></i>
+    </button>
+
+    <div id="visualPanel" class="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out border-l dark:border-gray-800 p-6 overflow-y-auto">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b dark:border-gray-800">
+            <h3 class="font-bold text-lg flex items-center gap-2"><i class="fas fa-palette text-emerald-600"></i> Aparência</h3>
+            <button onclick="toggleVisualPanel()" class="text-gray-500 hover:text-red-500 text-xl p-1">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-semibold mb-3">Esquema de Cores</label>
+            <div class="grid grid-cols-1 gap-2">
+                <button onclick="changeThemeColor('emerald')" class="w-full text-left p-3 rounded-xl border dark:border-gray-700 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 font-medium text-sm flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full bg-emerald-600"></span> Verde Ecológico (Padrão)
+                </button>
+                <button onclick="changeThemeColor('sky')" class="w-full text-left p-3 rounded-xl border dark:border-gray-700 bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-400 font-medium text-sm flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full bg-sky-600"></span> Azul Hidrológico
+                </button>
+                <button onclick="changeThemeColor('amber')" class="w-full text-left p-3 rounded-xl border dark:border-gray-700 bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 font-medium text-sm flex items-center gap-2">
+                    <span class="w-4 h-4 rounded-full bg-amber-600"></span> Laranja Solo/Outono
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-semibold mb-3">Fonte do Aplicativo</label>
+            <select onchange="changeAppFont(this.value)" class="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm">
+                <option value="font-poppins">Poppins (Elegante)</option>
+                <option value="font-inter">Inter (Moderna)</option>
+                <option value="font-mono">Roboto Mono (Técnica)</option>
+            </select>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-sm font-semibold mb-3">Tamanho do Texto</label>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+                <button onclick="changeTextSize('text-sm')" class="p-2 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">Pequeno</button>
+                <button onclick="changeTextSize('text-base')" class="p-2 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 border-emerald-500">Normal</button>
+                <button onclick="changeTextSize('text-lg')" class="p-2 border dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800">Grande</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-40 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="text-2xl id-text p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl" title="Abrir Menu Lateral">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="w-10 h-10 id-bg rounded-2xl flex items-center justify-center text-white text-2xl font-bold">
+                    🌱
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold id-text">Agro Forte</h1>
+                    <p class="text-xs text-gray-500 -mt-1">Futuro Sustentável</p>
+                </div>
+            </div>
+            
+            <div class="hidden xl:flex items-center gap-6 text-sm font-medium">
+                <a href="#home" class="hover:opacity-80">Início</a>
+                <a href="#praticas" class="hover:opacity-80">Práticas</a>
+                <a href="#pecuaria" class="hover:opacity-80">Pecuária</a>
+                <a href="#solos" class="hover:opacity-80">Solos</a>
+                <a href="#monitoramento" class="hover:opacity-80">Monitoramento</a>
+                <a href="#galeria" class="hover:opacity-80">Galeria</a>
+                <a href="#minigame" class="hover:opacity-80">Desafio Verde</a>
+                <a href="#calculadora" class="hover:opacity-80">Calculadora</a>
+                <a href="#contato" class="hover:opacity-80">Contato</a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="toggleDarkMode()" id="darkToggle" class="p-3 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 text-xl id-text">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out border-r dark:border-gray-800">
+        <div class="p-6 flex items-center justify-between border-b dark:border-gray-800">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🚜</span>
+                <span class="font-bold text-xl id-text">Menu Agro</span>
+            </div>
+            <button onclick="toggleSidebar()" class="text-xl text-gray-500 hover:text-red-500 p-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4 text-base font-medium border-none">
+            <a href="#home" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-home id-text"></i> Início</a>
+            <a href="#praticas" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-leaf id-text"></i> Práticas</a>
+            <a href="#pecuaria" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-cow id-text"></i> Pecuária Sustentável</a>
+            <a href="#solos" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-mountain id-text"></i> Estudo de Solos</a>
+            <a href="#monitoramento" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-cloud-sun id-text"></i> Monitoramento</a>
+            <a href="#galeria" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-images id-text"></i> Galeria</a>
+            <a href="#minigame" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-gamepad id-text"></i> Desafio Verde</a>
+            <a href="#beneficios" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-award id-text"></i> Benefícios</a>
+            <a href="#certificacoes" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-file-contract id-text"></i> Certificações</a>
+            <a href="#calculadora" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-calculator id-text"></i> Calculadora</a>
+            <a href="#credito" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-hand-holding-usd id-text"></i> Crédito Verde</a>
+            <a href="#contato" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" onclick="toggleSidebar()"><i class="fas fa-envelope id-text"></i> Contato</a>
+        </div>
+    </div>
+
+    <section id="home" class="hero-bg h-screen flex items-center text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="max-w-2xl">
+                <h2 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
+                    Equilíbrio entre<br>
+                    <span class="id-light-text">Produção</span> e<br>
+                    <span class="id-light-text">Natureza</span>
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Agro Forte: Práticas ecológicas e manejo zootécnico avançado que protegem o ecossistema.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#praticas" class="id-bg hover:opacity-90 px-8 py-4 rounded-2xl font-semibold text-lg transition-all text-center w-full sm:w-auto shadow-lg">
+                        Conhecer Práticas
+                    </a>
+                    <a href="#minigame" class="border-2 border-white hover:bg-white hover:text-gray-900 px-8 py-4 rounded-2xl font-semibold text-lg transition-all text-center w-full sm:w-auto">
+                        Jogar Desafio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="praticas" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Práticas Sustentáveis
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="praticas-container"></div>
+        </div>
+    </section>
+
+    <section id="pecuaria" class="py-20 bg-gray-50 dark:bg-gray-800/40 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Pecuária Sustentável e Bem-Estar Animal
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">O manejo inteligente de diferentes espécies garante alta rentabilidade com respeito ao meio ambiente.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm border dark:border-gray-800">
+                    <div class="text-4xl mb-4">🐄</div>
+                    <h3 class="text-2xl font-bold id-text mb-3">Criação de Bovinos (Corte e Leite)</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                        A bovinocultura sustentável baseia-se na substituição do pasto degradado pelo sistema de <strong>ILPF (Integração Lavoura-Pecuária-Floresta)</strong>. O sombreamento das árvores reduz o estresse térmico dos animais, elevando a produção de leite e ganho de peso. Ademais, o manejo rotacionado evita a compactação do solo e maximiza o rebrote do capim.
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg dark:bg-emerald-900/40 dark:text-emerald-300">Sequestro de Carbono Ativo</span>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm border dark:border-gray-800">
+                    <div class="text-4xl mb-4">🐑</div>
+                    <h3 class="text-2xl font-bold id-text mb-3">Criação de Ovinos</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                        Excelentes para a diversificação da propriedade, os ovinos possuem hábito alimentar seletivo. Em sistemas sustentáveis, o pastejo consorciado com bovinos ajuda no controle biológico de parasitas das pastagens. Exigem controle rigoroso de umidade no solo para evitar problemas podais (cascos).
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg dark:bg-emerald-900/40 dark:text-emerald-300">Pastejo Consorciado Eficiente</span>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm border dark:border-gray-800">
+                    <div class="text-4xl mb-4">🐐</div>
+                    <h3 class="text-2xl font-bold id-text mb-3">Criação de Caprinos</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                        Altamente rústicos e adaptados a biomas áridos e semiáridos (como a Caatinga). Os caprinos alimentam-se de arbustos folhosos altos, limpando áreas de capoeira indesejada sem destruir a raiz das gramíneas rasteiras. O esterco caprino é rico em potássio e nitrogênio, sendo perfeito para adubação orgânica.
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg dark:bg-emerald-900/40 dark:text-emerald-300">Alta Resiliência Climática</span>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm border dark:border-gray-800">
+                    <div class="text-4xl mb-4">🐖</div>
+                    <h3 class="text-2xl font-bold id-text mb-3">Criação de Suínos</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
+                        O grande trunfo ecológico da suinocultura moderna é o gerenciamento dos dejetos líquidos. Granjas sustentáveis canalizam os efluentes para <strong>biodigestores</strong>, convertendo o gás metano em energia elétrica e o resíduo estabilizado em biofertilizante de altíssima qualidade.
+                    </p>
+                    <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg dark:bg-emerald-900/40 dark:text-emerald-300">Economia Circular e Biogás</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="solos" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Classificação e Conservação de Solos
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Conhecer a geologia da sua propriedade permite aplicar a correção adequada e evitar o desgaste da terra.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 bg-amber-50 dark:bg-gray-800/60 rounded-2xl border dark:border-gray-700">
+                    <div class="text-amber-800 dark:text-amber-400 font-bold text-xl mb-2 flex items-center gap-2">🧱 Argiloso</div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                        Composto por partículas minúsculas altamente compactadas. Retém muita água e nutrientes, mas possui baixa oxigenação e tende a encharcar facilmente.
+                    </p>
+                    <p class="text-xs font-semibold id-text">Manejo: Adição de matéria orgânica e calagem para melhorar a porosidade.</p>
+                </div>
+
+                <div class="p-6 bg-amber-50 dark:bg-gray-800/60 rounded-2xl border dark:border-gray-700">
+                    <div class="text-amber-800 dark:text-amber-400 font-bold text-xl mb-2 flex items-center gap-2">⏳ Arenoso</div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                        Possui textura granulosa e grandes espaços entre as partículas. A água drena de forma ultra-rápida, carregando embora os nutrientes (lixiviação).
+                    </p>
+                    <p class="text-xs font-semibold id-text">Manejo: Plantio direto com cobertura morta constante e irrigação por gotejo.</p>
+                </div>
+
+                <div class="p-6 bg-amber-50 dark:bg-gray-800/60 rounded-2xl border dark:border-gray-700">
+                    <div class="text-amber-800 dark:text-amber-400 font-bold text-xl mb-2 flex items-center gap-2">🪱 Humoso (Orgânico)</div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                        Também conhecido como terra preta. É extremamente rico em húmus (matéria orgânica em decomposição), nitrogênio e microrganismos vivos benéficos.
+                    </p>
+                    <p class="text-xs font-semibold id-text">Manejo: Solo ideal para a maioria das culturas agrícolas. Requer preservação contra erosão.</p>
+                </div>
+
+                <div class="p-6 bg-amber-50 dark:bg-gray-800/60 rounded-2xl border dark:border-gray-700">
+                    <div class="text-amber-800 dark:text-amber-400 font-bold text-xl mb-2 flex items-center gap-2">🪨 Calcário</div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                        Contém alta concentração de carbonato de cálcio e pedras fragmentadas. É comum em regiões secas, possui pH alcalino e bloqueia a absorção de ferro de certas plantas.
+                    </p>
+                    <p class="text-xs font-semibold id-text">Manejo: Aplicação de fertilizantes acidificantes e cultivos específicos tolerantes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="monitoramento" class="py-20 id-bg text-white transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold text-white mx-auto inline-block">
+                    Clima & Alertas Agro
+                </h2>
+                <p class="mt-4 opacity-90">Indicadores ecológicos simulados em tempo real para a sua região</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-black/20 border border-white/20 p-8 rounded-3xl text-center">
+                    <div class="text-4xl mb-4"><i class="fas fa-seedling"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">Janela de Plantio</h3>
+                    <span class="inline-block px-4 py-2 bg-white/20 text-white font-bold rounded-xl text-sm border border-white/30">FAVORÁVEL</span>
+                    <p class="text-sm mt-4 opacity-80">Condições ótimas de umidade de solo para culturas de inverno.</p>
+                </div>
+                <div class="bg-black/20 border border-white/20 p-8 rounded-3xl text-center">
+                    <div class="text-4xl mb-4 text-amber-300"><i class="fas fa-bug"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">Risco de Pragas</h3>
+                    <span class="inline-block px-4 py-2 bg-amber-500/30 text-amber-200 font-bold rounded-xl text-sm border border-amber-500/40">MODERADO</span>
+                    <p class="text-sm mt-4 opacity-80">Alerta para focos de lagarta-do-cartucho. Priorize o Manejo Biológico.</p>
+                </div>
+                <div class="bg-black/20 border border-white/20 p-8 rounded-3xl text-center">
+                    <div class="text-4xl mb-4 text-sky-300"><i class="fas fa-tint"></i></div>
+                    <h3 class="text-xl font-semibold mb-2">Necessidade de Irrigação</h3>
+                    <span class="inline-block px-4 py-2 bg-sky-500/30 text-sky-200 font-bold rounded-xl text-sm border border-sky-500/40">BAIXA (20%)</span>
+                    <p class="text-sm mt-4 opacity-80">Previsão de chuvas leves mantendo a transpiração foliar adequada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="galeria" class="py-20 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-8">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Galeria Agro Sustentável
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Imagens inspiradoras de práticas sustentáveis</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                <button onclick="filterGallery('todos')" class="gallery-filter-btn px-5 py-2.5 rounded-xl text-sm font-semibold id-bg text-white shadow shadow-black/10">Todos</button>
+                <button onclick="filterGallery('solo')" class="gallery-filter-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50">Solo</button>
+                <button onclick="filterGallery('agua')" class="gallery-filter-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50">Água</button>
+                <button onclick="filterGallery('tecnologia')" class="gallery-filter-btn px-5 py-2.5 rounded-xl text-sm font-semibold bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50">Tecnologia</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="gallery-container"></div>
+        </div>
+    </section>
+
+    <section id="minigame" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Desafio do Fazendeiro
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Tome decisões no campo (Lavoura, Pecuária e Manejo de Solo). Os resultados em pontos só aparecem depois da sua escolha!</p>
+            </div>
+            
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 md:p-10 rounded-3xl border dark:border-gray-700 shadow-xl">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b dark:border-gray-700">
+                    <span class="font-medium text-sm">Status da Fazenda</span>
+                    <span class="id-bg text-white text-xs font-bold px-3 py-1.5 rounded-lg">Sustentabilidade: <span id="game-score">100</span> pts</span>
+                </div>
+                
+                <div id="game-box">
+                    <h3 id="game-question" class="text-xl font-bold mb-6 id-text">Carregando cenário...</h3>
+                    <div id="game-options" class="space-y-4"></div>
+                </div>
+
+                <div id="game-feedback-box" class="hidden text-center py-4 animate-fadeIn">
+                    <div id="feedback-icon" class="text-5xl mb-3">🌱</div>
+                    <p id="feedback-txt" class="font-semibold text-lg mb-4"></p>
+                    <button onclick="nextScenario()" class="id-bg text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:opacity-95">Avançar</button>
+                </div>
+
+                <div id="game-restart-box" class="hidden text-center py-6">
+                    <p id="game-final-msg" class="text-lg font-semibold mb-6"></p>
+                    <button onclick="restartGame()" class="id-bg hover:opacity-90 text-white font-semibold px-6 py-3 rounded-xl transition-colors">Jogar Novamente</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="beneficios" class="py-20 bg-gray-50 dark:bg-gray-800/40 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-bold id-text mb-8">Por que adotar?</h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-14 h-14 bg-gray-200/70 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">🌍</div>
+                            <div>
+                                <h4 class="font-semibold text-xl mb-2 id-text">Preservação do Solo</h4>
+                                <p class="text-gray-600 dark:text-gray-400">Redução da erosão e aumento da matéria orgânica.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-14 h-14 bg-gray-200/70 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">💧</div>
+                            <div>
+                                <h4 class="font-semibold text-xl mb-2 id-text">Economia de Água</h4>
+                                <p class="text-gray-600 dark:text-gray-400">Até 40% de redução no consumo.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-14 h-14 bg-gray-200/70 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0">🐝</div>
+                            <div>
+                                <h4 class="font-semibold text-xl mb-2 id-text">Biodiversidade</h4>
+                                <p class="text-gray-600 dark:text-gray-400">Proteção de polinizadores e fauna.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-8 rounded-3xl border dark:border-gray-800 shadow-md">
+                    <h3 class="text-2xl font-semibold mb-6 text-center id-text">Impacto Real</h3>
+                    <div class="grid grid-cols-2 gap-6 text-center">
+                        <div><div class="text-4xl md:text-5xl font-bold id-text">35%</div><p class="text-sm mt-1">Redução de CO₂</p></div>
+                        <div><div class="text-4xl md:text-5xl font-bold id-text">62%</div><p class="text-sm mt-1">Produtividade</p></div>
+                        <div><div class="text-4xl md:text-5xl font-bold id-text">28%</div><p class="text-sm mt-1">Econ. em Insumos</p></div>
+                        <div><div class="text-4xl md:text-5xl font-bold id-text">∞</div><p class="text-sm mt-1">Futuro Sustentável</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="certificacoes" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Certificações de Mercado
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Sua produção alinhada aos selos ambientais mais exigentes do mundo</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border dark:border-gray-700">
+                    <div class="id-text text-2xl mb-3"><i class="fas fa-certificate"></i></div>
+                    <h4 class="font-bold text-lg mb-1">Selo Orgânico Brasil</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Garante produtos livres de agrotóxicos químicos e transgênicos.</p>
+                </div>
+                <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border dark:border-gray-700">
+                    <div class="id-text text-2xl mb-3"><i class="fas fa-globe-americas"></i></div>
+                    <h4 class="font-bold text-lg mb-1">GlobalG.A.P.</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Padrão internacional de segurança alimentar e boas práticas agrícolas.</p>
+                </div>
+                <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border dark:border-gray-700">
+                    <div class="id-text text-2xl mb-3"><i class="fas fa-cloud"></i></div>
+                    <h4 class="font-bold text-lg mb-1">Carbono Neutro</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Comprova o balanço zerado nas emissões de gases de efeito estufa.</p>
+                </div>
+                <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border dark:border-gray-700">
+                    <div class="id-text text-2xl mb-3"><i class="fas fa-handshake"></i></div>
+                    <h4 class="font-bold text-lg mb-1">Fair Trade</h4>
+                    <p class="text-xs text-gray-600 dark:text-gray-400">Certifica responsabilidade social e relações comerciais dignas no campo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculadora" class="py-20 bg-gray-50 dark:bg-gray-800 transition-colors duration-300">
+        <div class="max-w-2xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Calculadora de Impacto
+                </h2>
+            </div>
+            <div class="bg-white dark:bg-gray-900 p-6 md:p-10 rounded-3xl shadow-lg border dark:border-gray-800">
+                <div class="space-y-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Área cultivada (hectares)</label>
+                        <input type="number" id="area" value="50" class="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Práticas adotadas</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="praticas-check"></div>
+                    </div>
+                    <button onclick="calcularImpacto()" class="w-full id-bg text-white py-5 rounded-2xl font-semibold text-xl transition-colors shadow-md">
+                        Calcular Impacto
+                    </button>
+                    <div id="resultado" class="hidden mt-8 p-8 bg-gray-50 dark:bg-gray-800 rounded-3xl border dark:border-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="credito" class="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-3xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Simulador de Crédito Verde
+                </h2>
+                <p class="mt-4 text-gray-600 dark:text-gray-400">Linhas de crédito especiais com juros reduzidos para projetos de sustentabilidade</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 md:p-10 rounded-3xl border dark:border-gray-700 shadow-md">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Valor do Investimento (R$)</label>
+                        <input type="number" id="loanAmount" value="150000" class="w-full px-5 py-3.5 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Linha de Financiamento</label>
+                        <select id="loanType" class="w-full px-5 py-3.5 rounded-xl border border-gray-300 dark:border-gray-600 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                            <option value="6.5">Bioeconomia (6.5% a.a.)</option>
+                            <option value="7.0">Energias Renováveis (7.0% a.a.)</option>
+                            <option value="5.0">Recuperação de Áreas Degradadas (5.0% a.a.)</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="calcularFinanciamento()" class="w-full id-bg text-white py-4 rounded-xl font-semibold text-lg transition-colors shadow-md">
+                    Simular Parcelas
+                </button>
+                <div id="loanResult" class="hidden mt-6 p-6 bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="py-20 bg-white dark:bg-gray-900 border-t dark:border-gray-800 transition-colors duration-300">
+        <div class="max-w-2xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title text-4xl md:text-5xl font-bold id-text mx-auto inline-block">
+                    Fale Conosco
+                </h2>
+            </div>
+            <form id="contactForm" class="space-y-6 bg-gray-50 dark:bg-gray-800 p-6 md:p-10 rounded-3xl border dark:border-gray-700">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Nome</label>
+                    <input type="text" id="nome" required class="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Email</label>
+                    <input type="email" id="email" required class="w-full px-6 py-4 rounded-2xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Mensagem</label>
+                    <textarea id="mensagem" rows="5" required class="w-full px-6 py-4 rounded-3xl border border-gray-300 dark:border-gray-700 focus:outline-none focus:border-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full id-bg text-white py-5 rounded-2xl font-semibold text-xl transition-colors shadow-md">
+                    Enviar Mensagem
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-16 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center gap-3 text-white mb-6">
+                <div class="w-9 h-9 id-bg rounded-2xl flex items-center justify-center text-2xl">🌱</div>
+                <span class="text-2xl font-bold">Agro Forte</span>
+            </div>
+            <p class="text-sm">© 2026 Agro Forte - Equilíbrio entre Produção e Meio Ambiente</p>
+        </div>
+    </footer>
+
+    <script>
+        const praticas = [
+            { titulo: "Agricultura de Precisão", icon: "📍", desc: "Drones, GPS e sensores para otimizar insumos.", impacto: "Redução de até 30% em fertilizantes" },
+            { titulo: "Rotação e Consorciação", icon: "🌾", desc: "Alternância de culturas para saúde do solo.", impacto: "Melhoria da matéria orgânica" },
+            { titulo: "Manejo Integrado de Pragas", icon: "🐞", desc: "Controle biológico e monitoramento.", impacto: "Menos agrotóxicos" },
+            { titulo: "Agrofloresta", icon: "🌳", desc: "Integração de árvores e culturas.", impacto: "Sequestro de carbono" },
+            { titulo: "Irrigação Inteligente", icon: "💧", desc: "Sensores de umidade.", impacto: "Economia de até 50% de água" },
+            { titulo: "Bioinsumos", icon: "🧪", desc: "Microrganismos benéficos.", impacto: "Solo mais vivo e resiliente" }
+        ];
+
+        // Banco de Dados do Minigame Expandido (6 Cenários com Pecuária e Solos)
+        let score = 100;
+        let currentScenario = 0;
+        const gameScenarios = [
+            {
+                question: "Cenário 1: Pragas invasivas apareceram na sua plantação de milho. O que você faz?",
+                options: [
+                    { text: "Opção A: Aplicar defensivo químico pesado em toda a área imediatamente.", penalty: 30, feedback: "Resultado: Você limpou a lavoura rápido, mas eliminou polinizadores úteis e insetos predadores naturais! Perdeu 30 pontos." },
+                    { text: "Opção B: Inserir insetos predadores benéficos (Manejo Integrado de Pragas).", penalty: -20, feedback: "Resultado: Excelente escolha ecológica! O equilíbrio natural da fauna foi preservado e controlou o surto. Ganhou 20 pontos!" }
+                ]
+            },
+            {
+                question: "Cenário 2: Um período prolongado de seca severa começou. Como gerenciar a água?",
+                options: [
+                    { text: "Opção A: Ligar a irrigação convencional por inundação em turnos diários.", penalty: 20, feedback: "Resultado: Alto desperdício por evaporação e causou leve erosão superficial do solo. Perdeu 20 pontos." },
+                    { text: "Opção B: Instalar gotejamento subterrâneo inteligente monitorado por sensores.", penalty: -20, feedback: "Resultado: Uso de precisão cirúrgica! Reduziu o consumo hídrico pela metade e manteve as plantas produtivas. Ganhou 20 pontos!" }
+                ]
+            },
+            {
+                question: "Cenário 3: O seu terreno possui uma grande inclinação e solo arenoso suscetível a erosões intensas. Como realizar o plantio?",
+                options: [
+                    { text: "Opção A: Fazer a aragem convencional de cima para baixo seguindo a descida do morro.", penalty: 40, feedback: "Resultado: Erro crítico! A água das chuvas ganhou velocidade e lavou a terra, formando grandes voçorocas e destruindo nutrientes. Perdeu 40 pontos." },
+                    { text: "Opção B: Implantar curvas de nível e manter cobertura vegetal morta permanente.", penalty: -30, feedback: "Resultado: Fantástico! As curvas quebram a velocidade da água e mantêm o solo arenoso firme no lugar. Ganhou 30 pontos!" }
+                ]
+            },
+            {
+                question: "Cenário 4: Você comprou um lote de bovinos e os pastos estão com a grama baixa. Como acomodá-los?",
+                options: [
+                    { text: "Opção A: Soltar o rebanho inteiro no pasto principal para andarem livres por meses.", penalty: 30, feedback: "Resultado: O gado compactou a terra e comeu as plantas até a raiz, degradando o pasto seriamente (superpastejo). Perdeu 30 pontos." },
+                    { text: "Opção B: Dividir o pasto em piquetes menores e adotar o Pastejo Rotacionado (Voisin).", penalty: -35, feedback: "Resultado: Perfeito! Enquanto os bovinos comem em um setor, os outros descansam e rebrotam fortes. Ganhou 35 pontos!" }
+                ]
+            },
+            {
+                question: "Cenário 5: Como manejar o acúmulo de dejetos gerado pela sua nova granja de suínos?",
+                options: [
+                    { text: "Opção A: Estocar em lagoas abertas sem impermeabilização na terra.", penalty: 35, feedback: "Resultado: Os dejetos infiltraram, atingindo o lençol freático e causando mau cheiro na comunidade vizinha. Perdeu 35 pontos." },
+                    { text: "Opção B: Construir um biodigestor para canalizar os dejetos líquidos.", penalty: -30, feedback: "Resultado: Visão sustentável! O biodigestor capturou o gás metano para gerar energia limpa e sobrou biofertilizante. Ganhou 30 pontos!" }
+                ]
+            },
+            {
+                question: "Cenário 6: Seu solo é extremamente Argiloso e está encharcando, apodrecendo as raízes. Qual a melhor medida?",
+                options: [
+                    { text: "Opção A: Dobrar a quantidade de irrigação para ver se o fluxo desce à força.", penalty: 25, feedback: "Resultado: Piorou a situação! O solo virou lama pura, asfixiando totalmente as minhocas e os microrganismos. Perdeu 25 pontos." },
+                    { text: "Opção B: Realizar escarificação leve da terra e incorporar matéria orgânica / composto.", penalty: -25, feedback: "Resultado: Ótimo! O composto cria poros que facilitam a drenagem natural da água acumulada na argila. Ganhou 25 pontos!" }
+                ]
+            }
+        ];
+
+        function initGame() {
+            if (currentScenario < gameScenarios.length) {
+                document.getElementById('game-score').innerText = score;
+                const sc = gameScenarios[currentScenario];
+                document.getElementById('game-question').innerText = sc.question;
+                
+                document.getElementById('game-box').classList.remove('hidden');
+                document.getElementById('game-feedback-box').classList.add('hidden');
+                
+                const optContainer = document.getElementById('game-options');
+                optContainer.innerHTML = '';
+                
+                sc.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-emerald-500 font-medium text-sm text-gray-700 dark:text-gray-300 interactive-btn";
+                    btn.innerText = opt.text;
+                    btn.onclick = () => selectOption(opt);
+                    optContainer.appendChild(btn);
+                });
+            } else {
+                endGame();
+            }
+        }
+
+        function selectOption(opt) {
+            score -= opt.penalty;
+            if (score < 0) score = 0;
+            
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-box').classList.add('hidden');
+            
+            const feedbackBox = document.getElementById('game-feedback-box');
+            feedbackBox.classList.remove('hidden');
+            
+            document.getElementById('feedback-icon').innerText = opt.penalty > 0 ? "⚠️" : "✨";
+            document.getElementById('feedback-txt').innerText = opt.feedback;
+        }
+
+        function nextScenario() {
+            currentScenario++;
+            initGame();
+        }
+
+        function endGame() {
+            document.getElementById('game-box').classList.add('hidden');
+            document.getElementById('game-feedback-box').classList.add('hidden');
+            const restartBox = document.getElementById('game-restart-box');
+            restartBox.classList.remove('hidden');
+
+            let msg = "";
+            if (score >= 170) msg = "👑 Mestre da Agropecuária! Suas escolhas integram pecuária moderna, solos ricos e ecologia com perfeição.";
+            else if (score >= 110) msg = "👍 Excelente Produtor! Sua fazenda é próspera e respeita as leis da natureza. Poucos reparos necessários.";
+            else msg = "🚨 Alerta de Degradação! O manejo incorreto esgotou seus solos e estressou o rebanho. Replaneje suas diretrizes técnicas.";
+            
+            document.getElementById('game-final-msg').innerText = msg;
+        }
+
+        function restartGame() {
+            score = 100;
+            currentScenario = 0;
+            document.getElementById('game-restart-box').classList.add('hidden');
+            initGame();
+        }
+
+        // Customização Visual Dinâmica
+        let currentThemeColor = 'emerald';
+        const colorMap = {
+            emerald: { bg: 'bg-emerald-600', text: 'text-emerald-800 dark:text-emerald-400', border: 'border-emerald-500', lightText: 'text-emerald-400' },
+            sky: { bg: 'bg-sky-600', text: 'text-sky-800 dark:text-sky-400', border: 'border-sky-500', lightText: 'text-sky-400' },
+            amber: { bg: 'bg-amber-600', text: 'text-amber-800 dark:text-amber-400', border: 'border-amber-500', lightText: 'text-amber-400' }
+        };
+
+        function changeThemeColor(color) {
+            currentThemeColor = color;
+            applyVisualStyles();
+        }
+
+        function changeAppFont(fontClass) {
+            const body = document.getElementById('app-body');
+            body.classList.remove('font-poppins', 'font-inter', 'font-mono');
+            body.classList.add(fontClass);
+        }
+
+        function changeTextSize(sizeClass) {
+            const body = document.getElementById('app-body');
+            body.classList.remove('text-sm', 'text-base', 'text-lg');
+            body.classList.add(sizeClass);
+        }
+
+        function applyVisualStyles() {
+            const cfg = colorMap[currentThemeColor];
+            
+            document.querySelectorAll('.id-bg').forEach(el => {
+                el.classList.remove('bg-emerald-600', 'bg-sky-600', 'bg-amber-600');
+                el.classList.add(cfg.bg);
+            });
+            
+            document.querySelectorAll('.id-text').forEach(el => {
+                el.classList.remove(
+                    'text-emerald-800', 'dark:text-emerald-400',
+                    'text-sky-800', 'dark:text-sky-400',
+                    'text-amber-800', 'dark:text-amber-400'
+                );
+                el.classList.add(...cfg.text.split(' '));
+            });
+
+            document.querySelectorAll('.id-light-text').forEach(el => {
+                el.classList.remove('text-emerald-400', 'text-sky-400', 'text-amber-400');
+                el.classList.add(cfg.lightText);
+            });
+        }
+
+        function toggleVisualPanel() {
+            document.getElementById('visualPanel').classList.toggle('translate-x-full');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebarMenu').classList.toggle('-translate-x-full');
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const icon = document.getElementById('darkToggle').querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        }
+
+        function renderPraticas() {
+            const container = document.getElementById('praticas-container');
+            container.innerHTML = '';
+            praticas.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'card bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-3xl overflow-hidden shadow-sm';
+                card.innerHTML = `
+                    <div class="h-2 id-bg"></div>
+                    <div class="p-8">
+                        <div class="text-6xl mb-6">${p.icon}</div>
+                        <h3 class="text-2xl font-semibold mb-3 id-text">${p.titulo}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">${p.desc}</p>
+                        <div class="pt-6 border-t border-gray-100 dark:border-gray-700 text-sm font-medium id-text">${p.impacto}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderCheckboxes() {
+            const container = document.getElementById('praticas-check');
+            container.innerHTML = '';
+            praticas.slice(0, 4).forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-3 bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border dark:border-gray-700";
+                div.innerHTML = `
+                    <input type="checkbox" id="check-${i}" checked class="w-5 h-5 accent-emerald-600 cursor-pointer">
+                    <label for="check-${i}" class="cursor-pointer text-gray-700 dark:text-gray-300 font-medium text-sm select-none">${p.titulo}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function calcularImpacto() {
+            const area = parseFloat(document.getElementById('area').value) || 0;
+            const checked = document.querySelectorAll('#praticas-check input:checked').length;
+            
+            const co2 = Math.round(area * 12 * checked * 0.7);
+            const agua = Math.round(area * 4500 * checked * 0.3);
+            
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.classList.remove('hidden');
+            resultadoDiv.innerHTML = `
+                <h3 class="text-2xl font-bold text-center mb-6 id-text">Seu Impacto Estimado</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 text-center">
+                    <div><div class="text-5xl font-bold id-text">${co2.toLocaleString('pt-BR')}</div><p class="text-sm text-gray-600 dark:text-gray-400 mt-1">kg de CO₂ evitados/ano</p></div>
+                    <div><div class="text-5xl font-bold id-text">${agua.toLocaleString('pt-BR')}</div><p class="text-sm text-gray-600 dark:text-gray-400 mt-1">litros de água economizados</p></div>
+                </div>
+            `;
+            applyVisualStyles();
+        }
+
+        const galleryImages = [
+            { url: "https://images.unsplash.com/photo-1592982537447-6f2a6a0c7c1f?auto=format&fit=crop&w=600&q=80", title: "Agrofloresta", categoria: "solo" },
+            { url: "https://images.unsplash.com/photo-1625246333197-5c2d3d5a5e5d?auto=format&fit=crop&w=600&q=80", title: "Agricultura de Precisão", categoria: "tecnologia" },
+            { url: "https://images.unsplash.com/photo-1585320806295-6c6f0c2f5e5e?auto=format&fit=crop&w=600&q=80", title: "Irrigação Inteligente", categoria: "agua" }
+        ];
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            galleryImages.forEach(img => {
+                const div = document.createElement('div');
+                div.className = "overflow-hidden rounded-3xl shadow-md gallery-img bg-white dark:bg-gray-900 border dark:border-gray-800 fade-in-view";
+                div.innerHTML = `
+                    <img src="${img.url}" alt="${img.title}" class="w-full h-64 object-cover">
+                    <div class="p-4 text-center font-medium text-gray-800 dark:text-gray-200">${img.title}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterGallery(categoria) {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            const filtered = categoria === 'todos' ? galleryImages : galleryImages.filter(img => img.categoria === categoria);
+            filtered.forEach(img => {
+                const div = document.createElement('div');
+                div.className = "overflow-hidden rounded-3xl shadow-md gallery-img bg-white dark:bg-gray-900 border dark:border-gray-800 fade-in-view";
+                div.innerHTML = `
+                    <img src="${img.url}" alt="${img.title}" class="w-full h-64 object-cover">
+                    <div class="p-4 text-center font-medium text-gray-800 dark:text-gray-200">${img.title}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function calcularFinanciamento() {
+            const valor = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const jurosAnual = parseFloat(document.getElementById('loanType').value);
+            const jurosMensal = (jurosAnual / 12) / 100;
+            const parcelas = 60;
+            const pmt = valor * (jurosMensal * Math.pow(1 + jurosMensal, parcelas)) / (Math.pow(1 + jurosMensal, parcelas) - 1);
+            
+            const container = document.getElementById('loanResult');
+            container.classList.remove('hidden');
+            container.innerHTML = `
+                <h4 class="text-lg font-bold id-text mb-3 text-center">Resultado</h4>
+                <p class="p-3 bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 text-center"><strong>Parcela Mensal:</strong> <span class="id-text font-bold">R$ ${pmt.toFixed(2)}</span></p>
+            `;
+            applyVisualStyles();
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('✅ Mensagem enviada com sucesso!');
+            this.reset();
+        });
+
+        window.onload = function() {
+            renderPraticas();
+            renderCheckboxes();
+            renderGallery();
+            initGame();
+            applyVisualStyles();
+        };
+    </script>
+</body>
+</html>
